@@ -15,8 +15,8 @@ export class OHLC {
 		return this.close - this.open
 	}
 	get direction () : string {
-		if (this.barRange > 0)	return "up"
-		if (this.barRange < 0)	return "down"
+		if (this.barRange > 0)	return "bull"
+		if (this.barRange < 0)	return "bear"
 		return "flat"
 	}
 
@@ -31,4 +31,14 @@ export class OHLC {
 		this.close = close
 		this.volume = volume ? volume : undefined
 	}
+}
+
+export interface Dimension {
+	width: number
+	height: number
+}
+
+export interface Point {
+	x: number
+	y: number
 }

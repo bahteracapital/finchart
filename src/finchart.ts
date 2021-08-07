@@ -1,10 +1,10 @@
-import { OHLC } from "./data"
+import { Dimension, OHLC, Point } from "./data"
 import { ChartOptions, DefaultChartOptions } from "./options"
 import { PriceAxis } from "./priceaxis"
 import { ChartStyle, DefaultChartStyle } from "./style"
 import { TimeAxis } from "./timeaxis"
 import { Toolbar } from "./toolbar"
-import { Viewport } from "./viewport"
+import { Viewport, ViewportBound } from "./viewport"
 
 /** Finchart is an advanced financial charting library developed at Bahtera Capital */
 export class Finchart {
@@ -21,6 +21,38 @@ export class Finchart {
 
 	options: ChartOptions
 	style: ChartStyle
+
+	// Computed properties
+	get devicePixelRatio(): number {
+		return window.devicePixelRatio
+	}
+	get viewportSize(): Dimension {
+		return {
+			width: this.viewport.width / this.devicePixelRatio,
+			height: this.viewport.height / this.devicePixelRatio
+		}
+	}
+	get bound(): ViewportBound {
+		return this.viewport.bound
+	}
+	get maximumDataHeight(): number {
+		return this.viewport.maxDataHeight
+	}
+	get padding(): number {
+		return this.viewport.padding
+	}
+	get gridSize(): Dimension {
+		return {
+			width: this.viewport.gridSize.width / this.devicePixelRatio,
+			height: this.viewport.gridSize.height / this.devicePixelRatio
+		}
+	}
+	get pointSize(): Point {
+		return {
+			x: this.viewport.pointSize.x / this.devicePixelRatio,
+			y: this.viewport.pointSize.y / this.devicePixelRatio
+		}
+	}
 
 	/** Create new Finchart instance from an element */
 	constructor (selector: string, data?: Array<any>, options?: ChartOptions, style?: ChartStyle) {
@@ -86,6 +118,7 @@ export class Finchart {
 			// Set element dimension to fill container
 			// this.element.style.width = "100%"
 			// this.element.style.height = "100%"
+			this.element.className = "finchart"
 			this.element.style.position = "relative"
 			this.element.style.overflow = "hidden"
 			this.element.style.backgroundColor = this.style.bgColor
@@ -128,18 +161,7 @@ export class Finchart {
 	}
 
 	configurePriceAxis (): void {
-		const priceAxisElement = document.createElement("div")
-		priceAxisElement.setAttribute("class", "price-axis")
-		priceAxisElement.style.width = this.style.priceAxisWidth + "px"
-		priceAxisElement.style.position = "absolute"
-		priceAxisElement.style.top = this.style.toolbarHeight + "px"
-		priceAxisElement.style.height = this.style.timeAxisHeight + this.viewport.height + "px"
-		priceAxisElement.style.right = "0"
-		priceAxisElement.style.borderLeft = "2px solid " + this.style.borderColor
-		priceAxisElement.style.overflow = "hidden"
-		priceAxisElement.style.backgroundColor = this.style.bgColor + "BB"
-		this.priceAxis = new PriceAxis(priceAxisElement, this.viewport)
-		this.element.appendChild(this.priceAxis.element)
+		this.priceAxis = new PriceAxis(this)
 	}
 
 	configureTimeAxis (): void {

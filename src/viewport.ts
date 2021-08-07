@@ -20,7 +20,7 @@ export class Viewport {
     height: number
     padding: number
 
-    bound: { minPrice: number, maxPrice: number, range: number, minDateTime?: Date, maxDateTime?: Date, timeRange: number }
+    bound: ViewportBound
     scrollPos: { x: number, y: number }
     scale: { x: number, y: number }
     pointSize: { x: number, y: number }
@@ -161,11 +161,11 @@ export class Viewport {
             const candle = this.displayData[index] as OHLC
 
             if (candle) {
-                if (candle.direction === "up") {
+                if (candle.direction === "bull") {
                     context.strokeStyle = this.style.bullColor
                     context.fillStyle = this.style.bullColor
                 }
-                else if (candle.direction === "down") {
+                else if (candle.direction === "bear") {
                     context.strokeStyle = this.style.bearColor
                     context.fillStyle = this.style.bearColor
                 } else {
@@ -189,10 +189,10 @@ export class Viewport {
                     width: this.gridSize.width - Math.floor(this.gridSize.width / 2),
                     height: this.pointSize.y * Math.abs(candle.close - candle.open)
                 }
-                if (candle.direction === "down") {
+                if (candle.direction === "bear") {
                     candleBody.y = ypos + (this.pointSize.y * (candle.high - candle.open))
                 }
-                else if (candle.direction === "up") {
+                else if (candle.direction === "bull") {
                     candleBody.y = ypos + (this.pointSize.y * (candle.high - candle.close))
                 }
                 else {
@@ -211,11 +211,11 @@ export class Viewport {
 
         const ypos = (this.height * this.padding) + (this.pointSize.y * (this.bound.maxPrice - candle.close))
 
-        if (candle.direction === "up") {
+        if (candle.direction === "bull") {
             context.strokeStyle = this.style.bullColor
             context.fillStyle = this.style.bullColor
         }
-        else if (candle.direction === "down") {
+        else if (candle.direction === "bear") {
             context.strokeStyle = this.style.bearColor
             context.fillStyle = this.style.bearColor
         } else {
@@ -242,4 +242,13 @@ export class Viewport {
         }
     }
 
+}
+
+export interface ViewportBound {
+    minPrice: number
+    maxPrice: number
+    range: number
+    minDateTime?: Date
+    maxDateTime?: Date
+    timeRange: number
 }

@@ -1,63 +1,107 @@
 import { OHLC } from "./data"
-import { Viewport } from "./viewport"
+import { Finchart } from "./finchart"
 
+/**
+ * Class that represent price-axis of the chart
+ */
 export class PriceAxis {
+    
+    private parent: Finchart
     element: HTMLDivElement
-    viewport: Viewport
 
-    constructor (element: HTMLDivElement, viewport: Viewport) {
-        this.element = element
-        this.viewport = viewport
+    /**
+     * @constructor
+     * @param parent {Finchart} 
+     */
+    constructor (parent: Finchart) {
+        this.parent = parent
+        this.initStyle()
+        this.drawElement()
         this.plotPriceLabels()
-        this.drawFlag()
+        if (this.parent.options.displayFlag) {
+            this.drawFlag()
+        }
     }
 
+    /** Add CSS to document */
+    initStyle (): void {
+        const styleClass = "finchart-price-axis-style"
+        // Remove previous style if exists
+        const existingStyles = document.querySelectorAll(`head style.${ styleClass }`)
+        existingStyles.forEach(el => {
+            el.remove()
+        })
+        // Create new style element
+        let element = document.createElement("style")
+        element.className = styleClass
+        element.innerHTML = `
+            .finchart .price-axis {
+                position: absolute;
+                top: ${ this.parent.style.toolbarHeight }px;
+                right: 0;
+                width: ${ this.parent.style.priceAxisWidth }px;
+                height: ${ this.parent.style.timeAxisHeight + this.parent.viewportSize.height }px;
+                border-left: 2px solid ${ this.parent.style.borderColor };
+                background: ${ this.parent.style.bgColor + "BB" };
+                overflow: hidden;
+            }
+            .finchart .price-axis .price {
+                position: absolute;
+                left: 10px;
+                line-height: 20px;
+                margin-top: -10px;
+                color: ${ this.parent.style.labelColor };
+            }
+            .finchart .price-axis .price-flag {
+                position: absolute;
+                left: 0;
+                height: 20px;
+                margin-top: -15px;
+                padding: 5px 10px;
+                line-height: 20px;
+                z-index: 1000;
+                color: #FFF;
+                border-radius: 4px;
+            }
+        `
+        document.querySelector("head").appendChild(element)
+    }
+
+    /** Draws HTML element of price axis */
+    drawElement (): void {
+        // Create HTML element
+        this.element = document.createElement("div")
+        this.element.className = "price-axis"
+        // Append to parent
+        this.parent.element.appendChild(this.element)
+    }
+
+    /** Plot price labels */
     plotPriceLabels (): void {
         this.element.innerHTML = ""
-        const delta = this.viewport.bound.range / this.viewport.maxDataHeight
-        for (let index = 0; index <= this.viewport.maxDataHeight; index++) {
+        const delta = this.parent.bound.range / this.parent.maximumDataHeight
+        for (let index = 0; index <= this.parent.maximumDataHeight; index++) {
             const label = document.createElement("div")
             label.className = "price"
-            label.innerText = (this.viewport.bound.maxPrice - (delta * index)).toString().padEnd(7, "0").slice(0, 7)
-            label.style.color = this.viewport.style.labelColor
-            label.style.position = "absolute"
-            label.style.left = "10px"
-            label.style.top = (this.viewport.height * (this.viewport.padding) + (index * this.viewport.gridSize.height)) / this.viewport.pixelRatio + "px"
-            label.style.lineHeight = "20px"
-            label.style.marginTop = "-10px"
+            label.innerText = (this.parent.bound.maxPrice - (delta * index)).toString().padEnd(7, "0").slice(0, 7)
+            label.style.top = this.parent.viewportSize.height * (this.parent.padding) + (index * this.parent.gridSize.height) + "px"
             this.element.appendChild(label)
         }
     }
 
+    /** Draw current price flag */
     drawFlag (): void {
-        const candle = this.viewport.data[0] as OHLC
-        const ypos = (this.viewport.height * this.viewport.padding) + (this.viewport.pointSize.y * (this.viewport.bound.maxPrice - candle.close))
-        let color = ""
-
-        if (candle.direction === "up") {
-            color = this.viewport.style.bullColor
-        }
-        else if (candle.direction === "down") {
-            color = this.viewport.style.bearColor
-        } else {
-            color = this.viewport.style.flatColor
-        }
+        const candle = this.parent.data[0] as OHLC
+        const ypos = (this.parent.viewportSize.height * this.parent.padding) + (this.parent.pointSize.y * (this.parent.bound.maxPrice - candle.close))
+        const color = this.parent.style[candle.direction + "Color"]
 
         let element = document.createElement("div")
         element.className = "price-flag"
         element.innerText = candle.close.toString().padEnd(7, "0").substr(0, 7)
         element.style.background = `linear-gradient(270deg, ${color + "AA"}, ${color + "EE"})`
-        element.style.color = "#FFFFFF"
-        element.style.position = "absolute"
-        element.style.zIndex = "9999"
-        element.style.top = ((ypos / this.viewport.pixelRatio) - 15) + "px"
-        element.style.left = "0"
-        element.style.height = "20px"
-        element.style.lineHeight = "20px"
-        element.style.padding = "5px 10px"
-        element.style.borderRadius = "4px"
+        element.style.top = ypos + "px"
 
-        if (ypos < this.viewport.height) {
+        if (ypos < this.parent.viewportSize.height) {
             this.element.appendChild(element)
         }
     }
