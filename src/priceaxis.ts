@@ -46,7 +46,7 @@ export class PriceAxis {
             .finchart .price-axis .price-flag {
                 position: absolute;
                 left: 0;
-                height: 20px;
+                height: 30px;
                 margin-top: -15px;
                 padding: 5px 10px;
                 line-height: 20px;
