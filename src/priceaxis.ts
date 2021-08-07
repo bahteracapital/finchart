@@ -25,16 +25,7 @@ export class PriceAxis {
 
     /** Add CSS to document */
     initStyle (): void {
-        const styleClass = "finchart-price-axis-style"
-        // Remove previous style if exists
-        const existingStyles = document.querySelectorAll(`head style.${ styleClass }`)
-        existingStyles.forEach(el => {
-            el.remove()
-        })
-        // Create new style element
-        let element = document.createElement("style")
-        element.className = styleClass
-        element.innerHTML = `
+        this.parent.addStyle(`
             .finchart .price-axis {
                 position: absolute;
                 top: ${ this.parent.style.toolbarHeight }px;
@@ -63,8 +54,7 @@ export class PriceAxis {
                 color: #FFF;
                 border-radius: 4px;
             }
-        `
-        document.querySelector("head").appendChild(element)
+        `)
     }
 
     /** Draws HTML element of price axis */

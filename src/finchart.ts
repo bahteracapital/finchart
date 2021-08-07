@@ -22,6 +22,8 @@ export class Finchart {
 	options: ChartOptions
 	style: ChartStyle
 
+	styleSheet: HTMLStyleElement
+
 	// Computed properties
 	get devicePixelRatio(): number {
 		return window.devicePixelRatio
@@ -59,12 +61,32 @@ export class Finchart {
 		// Chart options & styling
 		this.options = (options !== undefined) ? this.options = options : this.options = DefaultChartOptions
 		this.style = (style !== undefined) ? this.style = style : this.style = DefaultChartStyle
+
+		this.initStyle()
 		// Process data
 		this.data = this.prepareData(data)
 		// Process chart interface
 		this.configureGUI(selector)
 
 		this.registerEvents()
+	}
+
+	/** Add StyleSheet */
+	initStyle(): void {
+		const styleClass = "finchart"
+		// Remove previous style if exists
+		const existingStyles = document.querySelectorAll(`head style.${styleClass}`)
+		existingStyles.forEach(el => { el.remove() })
+		// Create new style element
+		this.styleSheet = document.createElement("style")
+		this.styleSheet.className = styleClass
+		this.styleSheet.innerHTML = ``
+		document.querySelector("head").appendChild(this.styleSheet)
+	}
+
+	/** Append style to StyleSheet */
+	addStyle(style: string): void {
+		this.styleSheet.innerHTML += style
 	}
 
 	/** Convert input data to acceptable types */
