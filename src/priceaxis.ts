@@ -2,7 +2,7 @@ import { OHLC } from "./data"
 import { Finchart } from "./finchart"
 
 /**
- * Class that represent price-axis of the chart
+ * Class that represents price-axis of the chart
  */
 export class PriceAxis {
     

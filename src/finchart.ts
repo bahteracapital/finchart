@@ -80,7 +80,12 @@ export class Finchart {
 		// Create new style element
 		this.styleSheet = document.createElement("style")
 		this.styleSheet.className = styleClass
-		this.styleSheet.innerHTML = ``
+		this.styleSheet.innerHTML = `
+			.finchart {}
+			.finchart * {
+				box-sizing: border-box
+			}
+		`
 		document.querySelector("head").appendChild(this.styleSheet)
 	}
 
@@ -156,16 +161,7 @@ export class Finchart {
 	}
 
 	configureToolbar(): void {
-		const toolbarElement = document.createElement("div")
-		toolbarElement.setAttribute("class", "toolbar")
-		toolbarElement.style.width = "100%"
-		toolbarElement.style.position = "absolute"
-		toolbarElement.style.top = "0"
-		toolbarElement.style.left = "0"
-		toolbarElement.style.height = this.style.toolbarHeight + "px"
-		toolbarElement.style.borderBottom = "2px solid " + this.style.borderColor
-		this.toolbar = new Toolbar(toolbarElement, this.viewport)
-		this.element.appendChild(this.toolbar.element)
+		this.toolbar = new Toolbar(this)
 	}
 
 	configureViewport (): void {
