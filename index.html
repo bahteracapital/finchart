@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Finchart Demo</title>
+    <style>
+        html, body {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+            overscroll-behavior-x: none;
+        }
+        .grid {
+            display: flex;
+            flex-wrap: wrap;
+            width: 100%;
+            height: 100%;
+            background-color: #223;
+        }
+        .grid > * {
+            width: 49.8%;
+            height: 100%;
+            margin-right: 0.4%;
+        }
+        .grid > *:nth-child(even) {
+            margin-right: 0;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="grid">
+        <div id="finchart-demo1"></div>
+        <div id="finchart-demo2"></div>
+    </div>
+
+    <script src="./dist/finchart.js"></script>
+    <script src="./data.js"></script>
+    <script>
+        let chart1 = new Finchart("#finchart-demo1", data)
+        let chart2 = new Finchart("#finchart-demo2", data)
+    </script>
+
+</body>
+</html>

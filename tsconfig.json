@@ -1,0 +1,9 @@
+{
+    "compilerOptions": {
+        "rootDir": "./src",
+        "outDir": "./build-tsc",
+        "target": "ES6",
+        "module": "CommonJS",
+        "lib": ["es5", "es6", "dom"]
+    }
+}
